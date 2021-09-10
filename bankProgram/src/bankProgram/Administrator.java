@@ -6,8 +6,5 @@ public class Administrator extends Employee {
 		// TODO Auto-generated method stub
 		
 	}
-	public static void login() {
-		
-	}
 
 }

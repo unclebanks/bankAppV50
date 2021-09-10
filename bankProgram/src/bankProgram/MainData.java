@@ -47,21 +47,30 @@ public class MainData {
 	private static void login() {
 		// TODO Auto-generated method stub
 		Scanner scan = new Scanner(System.in);
-		System.out.println("Welcome back! Which account are you trying to access?\n1.Applicant\n2.Customer\n3.Employee\n4.Administrator");
+		String userName;
+		String password2;
+		String role="";
+		System.out.println("Thank you for choosing DeadB33f bank as your financial institution of choice.\nPlease enter your username.");
+		userName=scan.next();
+		System.out.println(userName);
+		System.out.println("Thank you, please enter your password.");
+		password2=scan.next();
+		System.out.println("Which account are you trying to access?\n1.Applicant\n2.Customer\n3.Employee\n4.Administrator");
 		String initial=scan.next();
 		switch(initial) {
-		case "1": Users.login();
+		case "1": role="Users";
 		break;
-		case "2": Customer.login();
+		case "2": role="Customers";
 		break;
-		case "3": Employee.login();
+		case "3": role="Employee";
 		break;
-		case "4": Administrator.login();
+		case "4": role="Admin";
 		break;
 		default: System.out.println("Please make a valid selection");
 				 login();
 		break;
 		}
+		jdbc.checkLogin(userName, password2, role);
 		
 	}
 

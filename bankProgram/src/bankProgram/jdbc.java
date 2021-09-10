@@ -92,8 +92,11 @@ import java.sql.*;
 			
 		}
 
-		public static void checkLogin(String userName, String password2) {
+		public static void checkLogin(String userName, String password2, String role) {
 			// TODO Auto-generated method stub
+			if(role.equals("Admin")) {
+				role = "Employees";
+			}
 
 			try {
 				
@@ -102,8 +105,10 @@ import java.sql.*;
 				Connection conn= DriverManager.getConnection(db_url, user, password);
 				
 				Statement stmt=conn.createStatement();
+				System.out.println(role);
 				
-				ResultSet rs = stmt.executeQuery("Select * from Customers WHERE userName = '"+userName+"'");
+				ResultSet rs = stmt.executeQuery("Select * from "+role+" WHERE userName = '"+userName+"'");
+				System.out.println(rs);
 				
 				while(rs.next()) {
 					if (rs.getString(5).equals(password2)) {
