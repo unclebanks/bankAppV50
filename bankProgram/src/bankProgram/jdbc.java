@@ -8,35 +8,6 @@ import java.sql.*;
 		static final String password="12345678";
 		static final String db_url="jdbc:oracle:thin:@javadb1.cmkunmjaryn3.us-east-2.rds.amazonaws.com:1521:ORCL";
 
-		public static void main(String[] args) {
-
-			try {
-				
-				Class.forName("oracle.jdbc.driver.OracleDriver");
-				
-				Connection conn= DriverManager.getConnection(db_url, user, password);
-				
-				Statement stmt=conn.createStatement();
-				
-				ResultSet rs = stmt.executeQuery("Select * from Animals");
-				
-				while(rs.next()) {
-					
-					System.out.println("ID"+rs.getString(1));
-					System.out.println("ID"+rs.getString(2));
-					System.out.println("ID"+rs.getInt(3));
-				}
-				
-			} catch(ClassNotFoundException e) {
-				
-				System.out.println("Unable to load driver class");
-				
-			} catch (SQLException e) {
-				System.out.println("SQL error"+e);
-			}
-
-		}
-
 		public static boolean checkForDataBase() {
 			// TODO Auto-generated method stub
 			try {
@@ -112,7 +83,15 @@ import java.sql.*;
 				
 				while(rs.next()) {
 					if (rs.getString(5).equals(password2)) {
-						System.out.println("Perfect");
+						switch(role) {
+						case "Users": Users.menu(role);
+						break;
+						case "Employees": Employee.menu(role);
+						break;
+						case "Admin": Administrator.menu(role);
+						break;
+						case "Customer": Customer.menu(role);
+						}
 					} else {System.out.println("nope"); System.out.println(rs.getString(5));}
 				}
 				
@@ -123,6 +102,13 @@ import java.sql.*;
 			} catch (SQLException e) {
 				System.out.println("SQL error"+e);
 			}
+		}
+		public static void editAccountInfo() {
+			
+		}
+		
+		public static void checkPendingApps(String role) {
+			System.out.println("Ability to view pending applications. Users, Customers, Employees, and Admins can all check them with different perms.");
 		}
 
 }
