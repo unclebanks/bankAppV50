@@ -1,10 +1,5 @@
 package bankProgram;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -15,9 +10,7 @@ public class MainData {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Scanner scan = new Scanner(System.in);
 		System.out.println("Welcome to Deadbeef Bank.\nOne moment while I check for the proper databases.\n---------------------------");
-		jdbc.checkForDataBase();	
 		if (jdbc.checkForDataBase() == true) {
 			mainMenu();
 		} else {
@@ -27,26 +20,24 @@ public class MainData {
 
 	}
 	
-	private static void mainMenu() {
-		// TODO Auto-generated method stub
-		Scanner scan=new Scanner(System.in);		
+	static void mainMenu() {
+		// TODO Auto-generated method stub	
+		Scanner scan = new Scanner(System.in);	
 		System.out.println("Welcome to Deadbeef Bank. How may we assist you today?\n1. Apply for a user account\n2. Login");
 		String initial=scan.next();
 		switch(initial) {
 		case "1": accountCreation();
 		break;
-		case "2": login();
+		case "2": login(scan);
 		break;
 		default: System.out.println("Please make a valid selection");
 		break;
 		};
-		scan.close();
 		
 	}
 
-	private static void login() {
+	private static void login(Scanner scan) {
 		// TODO Auto-generated method stub
-		Scanner scan = new Scanner(System.in);
 		String userName;
 		String password2;
 		String role="";
@@ -67,10 +58,10 @@ public class MainData {
 		case "4": role="Admin";
 		break;
 		default: System.out.println("Please make a valid selection");
-				 login();
+				 login(scan);
 		break;
 		}
-		jdbc.checkLogin(userName, password2, role);
+		jdbc.checkLogin(userName, password2, role, scan);
 		
 	}
 
@@ -87,6 +78,16 @@ public class MainData {
 		String last=scan.next();
 		System.out.println("Please select which account type you would like to create\n1. Customer\n2. Employee\n3. Administrator");
 		int accountType=scan.nextInt();
+		switch(accountType) {
+		case 1: accountType=1;
+		break;
+		case 2: accountType=2;
+		break;
+		case 3: accountType=3;
+		break;
+		default: System.out.println("Please make a valid selection");
+		break;
+		}
 		System.out.println("Please select a username.");
 		userName=scan.next();
 		System.out.println("Please enter a password to protect your account.");

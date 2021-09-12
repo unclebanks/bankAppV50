@@ -4,16 +4,14 @@ import java.util.Scanner;
 
 public class Administrator extends Employee {
 
-	public static void menu(String role) {
+	public static void adminMenu(String role, Scanner scan) {
 		// TODO Admins should ONLY have admin powers. Not customer to prevent credential overflow
-		Scanner scan= new Scanner(System.in);
 		System.out.println("Main Menu. Please select one of the following.\n1. Manage Account\n2. View Applications\n");
 		String menuChoice=scan.next();
-		scan.close();
 		switch (menuChoice) {
 		case "1": manageAccount(role);
 		break;
-		case "2": jdbc.checkPendingApps(role);
+		case "2": System.out.println("Need jump for info");;
 		break;
 		default: System.out.println("Please enter a valid value");
 		}

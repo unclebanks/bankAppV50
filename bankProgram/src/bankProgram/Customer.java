@@ -4,12 +4,10 @@ import java.util.Scanner;
 
 public class Customer extends Users {
 
-	public static void menu(String role) {
+	public static void customerMenu(String role, Scanner scan) {
 		// TODO Auto-generated method stub
-		Scanner scan= new Scanner(System.in);
 		System.out.println("Main Menu. Please select one of the following.\n1. Account Actions\n2. Apply For A New Account\n3. Edit Account Details\n4. Check Pending Applications.");
 		String menuChoice=scan.next();
-		scan.close();
 		switch (menuChoice) {
 		case "1": monetaryManagement();
 		break;
@@ -17,7 +15,7 @@ public class Customer extends Users {
 		break;
 		case "3": customerEditInfo(role);
 		break;
-		case "4": jdbc.checkPendingApps(role);
+		case "4": System.out.println("Need jump for info here");;
 		break;
 		default: System.out.println("Please enter a valid value");
 		}
