@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Customer extends Users {
 
-	public static void customerMenu(String role, Scanner scan, double social) {
+	public static void customerMenu(String role, Scanner scan, double social, String username) {
 		// TODO Auto-generated method stub
 		System.out.println("Main Menu. Please select one of the following.\n1. Account Actions\n2. Apply For A New Account\n3. Edit Account Details\n4. Check Pending Applications.");
 		String menuChoice=scan.next();
@@ -13,7 +13,7 @@ public class Customer extends Users {
 		break;
 		case "2": applyForNewAccount(scan);
 		break;
-		case "3": customerEditInfo(role);
+		case "3": customerEditInfo(role,scan,username);
 		break;
 		case "4": jdbc.checkPendingBankAccount(social);
 		break;
@@ -22,9 +22,25 @@ public class Customer extends Users {
 		
 	}
 
-	private static void customerEditInfo(String role) {
-		// TODO Auto-generated method stub
-		
+	private static void customerEditInfo(String role, Scanner scan, String username) {
+		System.out.println("Please select which information you would like to edit.\n1. Username\n2. Password");
+		int infoToEdit=scan.nextInt();
+		String info;
+		switch(infoToEdit) {
+			case 1: 
+				info = "username";
+				System.out.println("Please enter the username you would like to change to.");
+				String newUN=scan.next();
+				jdbc.editAccountInfo(info, newUN, username, role);
+				break;
+			case 2:
+				info = "password";
+				System.out.println("Please enter the password you would like to change to.");
+				String newPW=scan.next();
+				jdbc.editAccountInfo(info, newPW, username, role);
+				break;
+			default:System.out.println("Please enter a valid option.");
+		}
 	}
 
 	private static void applyForNewAccount(Scanner scan) {
@@ -119,7 +135,7 @@ public class Customer extends Users {
 			
 		}
 		System.out.println("Completed depositing the money. Returning to Customer Menu.");
-		customerMenu("Customers",scan,social);		
+		customerMenu("Customers",scan,social,null);		
 	}
 
 	private static void withdrawMoney(Scanner scan, double balance, String accountType, double social, int account) {
@@ -142,16 +158,16 @@ public class Customer extends Users {
 		System.out.println("What would you like to view?\n1. Deposit history\n2. Withdrawal history\n3. Transfer history\n4. All history");
 		int option =scan.nextInt();
 		switch(option) {
-		case 1: jdbc.viewDepositHistory();
+		case 1: jdbc.viewDepositHistory(social);
 		break;
-		case 2: jdbc.viewWithdrawalsHistory();
+		case 2: jdbc.viewWithdrawalsHistory(social);
 		break;
-		case 3: jdbc.viewTransferHistory();
+		case 3: jdbc.viewTransferHistory(social);
 		break;
-		case 4: jdbc.viewAllHistory();
+		case 4: jdbc.viewAllHistory(social);
 		break;
-		default:System.out.println("Please enter a valid value.");
-		return;
+		default:System.out.println("Please enter a valid value."); 
+		break;
 		}
 	}
 

@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Employee extends Users {
 
 	public static void employeeMenu(String role, Scanner scan) {
-		System.out.println("Main Menu.\n--------------------------\nPlease select one of the following.\n1. Check Customers Application\n2. Edit Customer Account\n3. Delete Account");
+		System.out.println("Main Menu.\n--------------------------\nPlease select one of the following.\n1. Check Customers Application\n2. Edit Customer Account\n3. Delete Account\n4. Check customers account.");
 		String menuChoice=scan.next();
 		switch (menuChoice) {
 			case "1": checkAppStatus(scan);
@@ -14,8 +14,16 @@ public class Employee extends Users {
 			break;
 			case "3": employeeDeleteAccount(scan);
 			break;
+			case "4": checkCustomer(scan);
+			break;
 			default: System.out.println("Please enter a valid value");
 		}		
+	}
+	private static void checkCustomer(Scanner scan) {
+		System.out.println("Please enter the social security number of the customer");
+		double social=scan.nextDouble();
+		jdbc.viewAllHistory(social);	
+		
 	}
 
 	private static void checkAppStatus(Scanner scan) {

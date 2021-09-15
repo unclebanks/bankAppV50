@@ -71,7 +71,7 @@ import java.util.Scanner;
 						break;
 						case "Admin": Administrator.adminMenu(role, scan);
 						break;
-						case "Customers": double social= rs.getInt(3);Customer.customerMenu(role, scan, social);
+						case "Customers": double social= rs.getInt(3);Customer.customerMenu(role, scan, social,userName);
 						break;
 						default:System.out.println("Processing error.");
 						}
@@ -464,6 +464,7 @@ import java.util.Scanner;
 				stmt2.executeUpdate("UPDATE EXISTINGACCOUNTS SET "+accountType+" = "+newBalanceOrigin+" WHERE IDENTIFIER = '"+social+"'");
 				System.out.println("Finished transfer, new balance for origin account is "+newBalanceOrigin+" and the new balance for the receiving account it "+newBalanceReceiver);
 				System.out.println("For security purposes returning to main menu");
+				logTransfers(social,accountType,oldBalanceOrigin,newBalanceOrigin,oldBalanceReceiver,newBalanceReceiver,amountToTransfer, toAccount);
 				MainData.mainMenu();
 			} catch (ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
@@ -482,8 +483,24 @@ import java.util.Scanner;
 				e.printStackTrace();
 			}
 		}
-		static void viewDepositHistory() {
-			System.out.println("needs done");
+		static void viewDepositHistory(double social) {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from TRANSACTIONS WHERE IDENTIFIER = '"+social+"' AND TYPE = 'deposit'");
+				while (rs.next()) {
+				    String type = rs.getString(2);
+				    String account = rs.getString(3);
+				    double oldBal = rs.getDouble(4);
+				    double newBal = rs.getDouble(5);
+				    double amount = rs.getDouble(9);
+				    System.out.println("Type of transaction: "+type + "\nDeposited account: " +account+ "\nPrevious Balance: " +oldBal+ "\nNew Balance: " +newBal +"\nAmount Deposited: +"+amount+"\n------------------------------------------");
+				}
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		private static void logWithdrawals(double social, String accountType, double balance, int wAmount, double newBal) {
 			try {
@@ -496,17 +513,62 @@ import java.util.Scanner;
 				e.printStackTrace();
 			}
 		}
-		static void viewWithdrawalsHistory() {
-			System.out.println("needs done");
+		static void viewWithdrawalsHistory(double social) {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from TRANSACTIONS WHERE IDENTIFIER = '"+social+"' AND TYPE = 'withdrawal'");
+				while (rs.next()) {
+				    String type = rs.getString(2);
+				    String account = rs.getString(3);
+				    double oldBal = rs.getDouble(4);
+				    double newBal = rs.getDouble(5);
+				    double amount = rs.getDouble(9);
+				    System.out.println("Type of transaction: "+type + "\nWithdrawn account: " +account+ "\nPrevious Balance: " +oldBal+ "\nNew Balance: " +newBal +"\nAmount Withdrawn: -"+amount+"\n-------------------------------------------------");
+				}
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		private static void logTransfers() {
-			System.out.println("same for transfers.");
+		private static void logTransfers(double social, String accountType, double oldBalanceOrigin, double newBalanceOrigin, double oldBalanceReceiver, double newBalanceReceiver, double amountToTransfer,String toAccount) {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				stmt.executeUpdate("INSERT INTO TRANSACTIONS (IDENTIFIER,TYPE,ORIGIN,ORIGINAMOUNTPRE,ORIGINAMOUNTPOST,RECEIVE,RECEIVEAMOUNTPRE,RECEIVEAMOUNTPOST,AMOUNT) VALUES ('"+social+"','transfer','"+accountType+"','"+oldBalanceOrigin+"','"+newBalanceOrigin+"','"+toAccount+"','"+oldBalanceReceiver+"','"+newBalanceReceiver+"','"+amountToTransfer+"')");
+			} catch (SQLException | ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		static void viewTransferHistory() {
-			System.out.println("needs done");
+		static void viewTransferHistory(double social) {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from TRANSACTIONS WHERE IDENTIFIER = '"+social+"' AND TYPE = 'transfer'");
+				while (rs.next()) {
+				    String type = rs.getString(2);
+				    String account = rs.getString(3);
+				    double oldBal = rs.getDouble(4);
+				    double newBal = rs.getDouble(5);
+				    String toType = rs.getString(6);
+				    double toOld = rs.getDouble(7);
+				    double toNew = rs.getDouble(8);
+				    double amount = rs.getDouble(9);
+				    System.out.println("Type of transaction: "+type + "\nWithdrawn account: " +account+ "\nPrevious Balance: " +oldBal+ "\nNew Balance: " +newBal +"\nAmount Transfered: -"+amount+"\nDeposited Account: "+toType+"\nReceiving account previous balance: "+toOld+"\nReceiving account new balance: "+toNew+"\n-------------------------------------");
+				}
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		static void viewAllHistory() {
-			System.out.println("needs done");
+		static void viewAllHistory(double social) {
+			viewTransferHistory(social);
+			viewDepositHistory(social);
+			viewWithdrawalsHistory(social);
 		}
 
 }
