@@ -20,10 +20,9 @@ import java.util.Scanner;
 					System.out.println("We hit false");
 					return false;
 				}
-			} catch(ClassNotFoundException e) {
-				System.out.println("Unable to load driver class");
-			} catch (SQLException e) {
-				System.out.println("SQL error"+e);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			System.out.println("we Hit true");
 			return true;
@@ -46,10 +45,9 @@ import java.util.Scanner;
 				stmt.executeUpdate("INSERT INTO Users VALUES ('"+first+"','"+last+"','"+social+"','"+userName+"','"+password2+"','"+accountType+"')");
 				System.out.println("Provisional account created.");
 					}
-			} catch(ClassNotFoundException e) {
-				System.out.println("Unable to load driver class");
-			} catch (SQLException e) {
-				System.out.println("SQL error"+e);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 
@@ -63,7 +61,7 @@ import java.util.Scanner;
 				Connection conn= DriverManager.getConnection(db_url, user, password);
 				Statement stmt=conn.createStatement();
 				System.out.println("Accessing the "+role+" account.\n---------------------\n");
-				ResultSet rs = stmt.executeQuery("Select * from "+role+" WHERE userName = '"+userName+"'");
+				ResultSet rs = stmt.executeQuery("Select * from "+role+" WHERE USERNAME = '"+userName+"'");
 				if(rs.next()) {
 					if (rs.getString(5).equals(password2)) {
 						switch(role) {
@@ -73,17 +71,16 @@ import java.util.Scanner;
 						break;
 						case "Admin": Administrator.adminMenu(role, scan);
 						break;
-						case "Customer": Customer.customerMenu(role, scan);
+						case "Customers": double social= rs.getInt(3);Customer.customerMenu(role, scan, social);
+						break;
+						default:System.out.println("Processing error.");
 						}
 					} else {System.out.println("nope"); System.out.println(rs.getString(5));}
 				} else {System.out.println("Account not found, returning to main menu"); MainData.mainMenu();}
 				
-			} catch(ClassNotFoundException e) {
-				
-				System.out.println("Unable to load driver class");
-				
-			} catch (SQLException e) {
-				System.out.println("SQL error"+e);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		public static void editAccountInfo(String info, String value, String username2, String role) {
@@ -98,10 +95,9 @@ import java.util.Scanner;
 					System.out.println("Finished updating.\nReturning to main menu");
 					MainData.mainMenu();
 					} else {System.out.println("System failure, returning to main menu."); MainData.mainMenu();}
-			} catch(ClassNotFoundException e) {
-				System.out.println("Unable to load driver class");
-			} catch (SQLException e) {
-				System.out.println("SQL error"+e);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 		}
@@ -127,20 +123,17 @@ import java.util.Scanner;
 					}
 				} else {System.out.println("Application not found.");}
 				
-			} catch(ClassNotFoundException e) {
-				
-				System.out.println("Unable to load driver class");
-				
-			} catch (SQLException e) {
-				System.out.println("SQL error"+e);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		static void accountDeletion(String role, int social, String password2) {
+		static void accountDeletion(String role, double social, String username) {
 			try {	
 				Class.forName("oracle.jdbc.driver.OracleDriver");
 				Connection conn= DriverManager.getConnection(db_url, user, password);
 				Statement stmt=conn.createStatement();
-				ResultSet rs = stmt.executeQuery("Select * from "+role+" WHERE social = '"+social+"' AND password = '"+password2+"'");
+				ResultSet rs = stmt.executeQuery("Select * from "+role+" WHERE social = '"+social+"' AND username = '"+username+"'");
 				if(rs.next()) {
 					System.out.println("User found, deleting account.");
 					stmt.executeUpdate("DELETE FROM "+role+" WHERE social = '"+social+"'");
@@ -148,14 +141,162 @@ import java.util.Scanner;
 					MainData.mainMenu();
 				} else {System.out.println("Application not found.");}
 				
-			} catch(ClassNotFoundException e) {
-				
-				System.out.println("Unable to load driver class");
-				
-			} catch (SQLException e) {
-				System.out.println("SQL error"+e);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
+		}
+
+		public static void approveDenyApp(String role, Double social, String username, Scanner scan) {
+			try {	
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from "+role+" WHERE social = '"+social+"' AND username = '"+username+"'");
+				System.out.println(rs.next());
+				if(rs !=null) {
+						System.out.println("Would you like to approve or deny this account?\n1. Approve\n2. Deny");
+						String aOrD=scan.next();
+						switch(aOrD) {
+							case "1": moveAccount(role,social,username);
+							break;
+							case "2": accountDeletion(role,social,username);
+							break;
+							default:System.out.println("Please select either number 1 or 2.");
+							break;
+						}
+					}			
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		public static boolean checkDeletePerms(String role, double social, String username, int perms) {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from "+role+" WHERE social = '"+social+"' AND username = '"+username+"'");
+				if (rs.next() && rs.getInt(6) < perms + 2) {
+					System.out.println("Print true");
+					return true;
+				}
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Return false");
+			return false;
+			
+		}
+		public static void moveAccount(String role, Double social, String username) {
+			System.out.println("Made it to move");
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				Connection conn2= DriverManager.getConnection(db_url, user, password);
+				Statement stmt2=conn2.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from "+role+" WHERE social = '"+social+"' AND username = '"+username+"'");
+				System.out.println(rs.next());
+				boolean admin=false;
+				String first = rs.getString(1);
+				String last = rs.getString(2);
+				String password2=rs.getString(5);
+				int accountType=rs.getInt(6);
+				String db="";
+				switch(accountType) {
+					case 1: db="Customers";
+					break;
+					case 2: db="Employees";
+					break;
+					case 3: db="Employees"; admin=true;
+					break;
+				}
+					if (admin==true) {
+						System.out.println("Moving account information.");
+						stmt2.executeUpdate("INSERT INTO "+db+" VALUES ('"+first+"','"+last+"','"+social+"','"+username+"','"+password2+"', 1)");
+					} else {
+						stmt2.executeUpdate("INSERT INTO "+db+" VALUES ('"+first+"','"+last+"','"+social+"','"+username+"','"+password2+"', 0)");}
+				accountDeletion(role,social,username);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+
+		public static void bankAccountApplication(int accountType, double social) {
+			// TODO Auto-generated method stub
+			System.out.println("Preparing to create application.");
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from PENDINGACCOUNTS WHERE identifier = '"+social+"'");
+				if (rs.next()) {
+					System.out.println("Provisional account found, returning to main menu.");
+					MainData.mainMenu();
+					} else {
+				stmt.executeUpdate("INSERT INTO PENDINGACCOUNTS VALUES ('"+social+"','"+accountType+"')");
+				System.out.println("Provisional account created.");
+					}
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		public static void checkPendingBankAccount(Double social) {
+			try {	
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from PENDINGACCOUNTS WHERE identifier = '"+social+"'");
+				if(rs.next()) {
+					int status = rs.getInt(2);
+					switch(status) {
+					case 1: System.out.println("Application For checking account found and still pending");
+					break;
+					case 2: System.out.println("Application For savings account found and still pending");
+					break;
+					case 3: System.out.println("Application For investment account found and still pending");
+					break;
+					}
+				} else {System.out.println("Application not found.");}
+				MainData.mainMenu();
+				
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		public static void approveDenyBankApp(Double social, String username, Scanner scan) {
+			try {	
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from PENDINGACCOUNTS WHERE social = '"+social+"'");
+				System.out.println(rs.next());
+				String role="null";
+				if(rs !=null) {
+						System.out.println("Would you like to approve or deny this application?\n1. Approve\n2. Deny");
+						String aOrD=scan.next();
+						switch(aOrD) {
+							case "1":  System.out.println("Needs approve banks about");    //approveBankAccount(social,username);
+							break;
+							case "2": accountDeletion(role,social,username);//Need application deletion here.
+							break;
+							default:System.out.println("Please select either number 1 or 2.");
+							break;
+						}
+					}			
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 }
