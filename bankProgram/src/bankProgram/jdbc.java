@@ -285,7 +285,7 @@ import java.util.Scanner;
 						System.out.println("Would you like to approve or deny this application?\n1. Approve\n2. Deny");
 						String aOrD=scan.next();
 						switch(aOrD) {
-							case "1":  System.out.println("Needs approve banks about");    //approveBankAccount(social,username);
+							case "1":  approveBankAccount(role, social, username);    //approveBankAccount(social,username);
 							break;
 							case "2": accountDeletion(role,social,username);//Need application deletion here.
 							break;
@@ -297,6 +297,45 @@ import java.util.Scanner;
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+		public static void approveBankAccount(String role, Double social, String username) {
+			System.out.println("Made it to approveBankAccount");
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				Connection conn2= DriverManager.getConnection(db_url, user, password);
+				Statement stmt2=conn2.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from PENDINGACCOUNTS WHERE IDENTIFIER = '"+social+"'");
+				System.out.println("got data from PENDINGACCOUNTS");
+				System.out.println(rs.next());
+				String identifier = rs.getString(1);
+				int accountType = rs.getInt(2);
+				String newBankAccount="";
+				String db="";
+				switch(accountType) {
+					case 1: db="CheckingAccount"; newBankAccount = "INSERT INTO EXISTINGACCOUNTS VALUES ('"+identifier+"', 1, 0, 0, 0, 0, 0)";
+					break;
+					case 2: db="SavingAccount"; newBankAccount = "INSERT INTO EXISTINGACCOUNTS VALUES ('"+identifier+"', 0, 0, 1, 0, 0, 0)";
+					break;
+					case 3: db="InvestingAccount"; newBankAccount = "INSERT INTO EXISTINGACCOUNTS VALUES ('"+identifier+"', 0, 0, 0, 0, 1, 0)";
+					break;
+				}
+				ResultSet rs2 = stmt2.executeQuery("Select * from EXISTINGACCOUNTS WHERE IDENTIFIER = '"+social+"'");
+				if (rs2.next()) {
+					System.out.println("Found account and updating information");
+					stmt2.executeUpdate("UPDATE EXISTINGACCOUNTS SET "+db+" = 1 WHERE IDENTIFIER = '"+identifier+"'");
+					//add account application deletion method
+				} else {
+					stmt2.executeUpdate(newBankAccount);
+				}
+				System.out.println("Going to account deletion");
+				accountDeletion(role,social,username);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 
 }
