@@ -23,14 +23,14 @@ public class MainData {
 	static void mainMenu() {
 		// TODO Auto-generated method stub	
 		Scanner scan = new Scanner(System.in);	
-		System.out.println("Welcome to Deadbeef Bank. How may we assist you today?\n1. Apply for a user account\n2. Login");
+		System.out.println("Welcome to Deadbeef Bank.\nHow may we assist you today?\n1. Apply for a user account\n2. Login");
 		String initial=scan.next();
 		switch(initial) {
 		case "1": accountCreation();
 		break;
 		case "2": login(scan);
 		break;
-		default: System.out.println("Please make a valid selection");
+		default: System.out.println("Please make a valid selection"); mainMenu();
 		break;
 		};
 		

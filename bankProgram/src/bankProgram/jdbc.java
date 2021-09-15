@@ -24,7 +24,7 @@ import java.util.Scanner;
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("we Hit true");
+			System.out.println("Database found, redirecting to main menu.\n");
 			return true;
 		}
 		
@@ -44,6 +44,7 @@ import java.util.Scanner;
 					} else {
 				stmt.executeUpdate("INSERT INTO Users VALUES ('"+first+"','"+last+"','"+social+"','"+userName+"','"+password2+"','"+accountType+"')");
 				System.out.println("Provisional account created.");
+				MainData.mainMenu();
 					}
 			} catch (ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
@@ -94,7 +95,7 @@ import java.util.Scanner;
 					stmt.executeUpdate("UPDATE "+role+" SET "+info+" = '"+value+"' WHERE userName = '"+username2+"' ");
 					System.out.println("Finished updating.\nReturning to main menu");
 					MainData.mainMenu();
-					} else {System.out.println("System failure, returning to main menu."); MainData.mainMenu();}
+					} else {System.out.println("Information could not be verified, returning to main menu."); MainData.mainMenu();}
 			} catch (ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -112,13 +113,13 @@ import java.util.Scanner;
 				if(rs.next()) {
 					int status = rs.getInt(6);
 					switch(status) {
-					case 1: System.out.println("Application For customer account found and still pending");
+					case 1: System.out.println("Application For customer account found and still pending. Redirecting to main menu.\n");
 					break;
-					case 2: System.out.println("Application For employee account found and still pending");
+					case 2: System.out.println("Application For employee account found and still pending. Redirecting to main menu.\n");
 					break;
-					case 3: System.out.println("Application For admin account found and still pending");
+					case 3: System.out.println("Application For admin account found and still pending. Redirecting to main menu.\n");
 					break;
-					case 4: System.out.println("Application For customer account found and still pending");
+					case 4: System.out.println("Application For customer account found and still pending. Redirecting to main menu.\n");
 					break;
 					}
 				} else {System.out.println("Application not found.");}
@@ -240,7 +241,8 @@ import java.util.Scanner;
 					MainData.mainMenu();
 					} else {
 				stmt.executeUpdate("INSERT INTO PENDINGACCOUNTS VALUES ('"+social+"','"+accountType+"')");
-				System.out.println("Provisional account created.");
+				System.out.println("Provisional account created. Returning to main menu for security.\n");
+				MainData.mainMenu();
 					}
 			} catch (ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
