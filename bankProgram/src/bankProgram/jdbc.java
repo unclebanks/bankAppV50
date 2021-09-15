@@ -287,7 +287,7 @@ import java.util.Scanner;
 						switch(aOrD) {
 							case "1":  approveBankAccount(role, social, username);    //approveBankAccount(social,username);
 							break;
-							case "2": accountDeletion(role,social,username);//Need application deletion here.
+							case "2": bankAccApplicationDeletion(social);//Need application deletion here.
 							break;
 							default:System.out.println("Please select either number 1 or 2.");
 							break;
@@ -309,7 +309,7 @@ import java.util.Scanner;
 				ResultSet rs = stmt.executeQuery("Select * from PENDINGACCOUNTS WHERE IDENTIFIER = '"+social+"'");
 				System.out.println("got data from PENDINGACCOUNTS");
 				System.out.println(rs.next());
-				String identifier = rs.getString(1);
+				double identifier = rs.getDouble(1);
 				int accountType = rs.getInt(2);
 				String newBankAccount="";
 				String db="";
@@ -330,7 +330,26 @@ import java.util.Scanner;
 					stmt2.executeUpdate(newBankAccount);
 				}
 				System.out.println("Going to account deletion");
-				accountDeletion(role,social,username);
+				bankAccApplicationDeletion(identifier);
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		static void bankAccApplicationDeletion(double identifier) {
+			try {	
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from PENDINGACCOUNTS WHERE identifier = '"+identifier+"'");
+				if(rs.next()) {
+					System.out.println("Application found, deleting account.");
+					stmt.executeUpdate("DELETE FROM PENDINGACCOUNTS WHERE identifier = '"+identifier+"'");
+					System.out.println("Finished deleting.\nReturning to main menu");
+					MainData.mainMenu();
+				} else {System.out.println("Application not found.");}
+				
 			} catch (ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
