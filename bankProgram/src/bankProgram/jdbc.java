@@ -468,5 +468,26 @@ import java.util.Scanner;
 				e.printStackTrace();
 			}
 		}
+		private static void logDeposits() {
+			System.out.println("Need to log deposits here");
+		}
+		static void viewDepositHistory() {
+			System.out.println("needs done");
+		}
+		private static void logWithdrawals() {
+			System.out.println("same for withdrawals");
+		}
+		static void viewWithdrawalsHistory() {
+			System.out.println("needs done");
+		}
+		private static void logTransfers() {
+			System.out.println("same for transfers.");
+		}
+		static void viewTransferHistory() {
+			System.out.println("needs done");
+		}
+		static void viewAllHistory() {
+			System.out.println("needs done");
+		}
 
 }

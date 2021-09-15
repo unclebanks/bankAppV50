@@ -51,7 +51,7 @@ public class Customer extends Users {
 			break;
 			default: return;			
 			}
-			System.out.println("What would you like to do with this account?\n1. Withdraw money\n2. Deposit money\n3. Transfer money");
+			System.out.println("What would you like to do with this account?\n1. Withdraw money\n2. Deposit money\n3. Transfer money\n4. View account history");
 			int whatToDo = scan.nextInt();
 			double balance=jdbc.getBankAccDetails(social,account);
 			switch (whatToDo) {
@@ -60,6 +60,8 @@ public class Customer extends Users {
 				case 2: depositMoney(scan,balance,accountType,social);
 				break;
 				case 3: transferMoney(scan, accountType,social,account);
+				break;
+				case 4: viewAccountHistory(scan);
 				break;
 				default:System.out.println("Please make a valid choice.");
 			return;
@@ -134,6 +136,22 @@ public class Customer extends Users {
 			else {
 			jdbc.withdrawMoney(wAmount, balance, accountType, social);
 			
+		}
+	}
+	private static void viewAccountHistory(Scanner scan) {
+		System.out.println("What would you like to view?\n1. Deposit history\n2. Withdrawal history\n3. Transfer history\n4. All history");
+		int option =scan.nextInt();
+		switch(option) {
+		case 1: jdbc.viewDepositHistory();
+		break;
+		case 2: jdbc.viewWithdrawalsHistory();
+		break;
+		case 3: jdbc.viewTransferHistory();
+		break;
+		case 4: jdbc.viewAllHistory();
+		break;
+		default:System.out.println("Please enter a valid value.");
+		return;
 		}
 	}
 
