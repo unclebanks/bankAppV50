@@ -60,6 +60,7 @@ public class Users {
 		System.out.println("Please confirm your social security number.");
 		double social=scan.nextDouble();
 		jdbc.checkPendingApps(role, social, username);
+		MainData.mainMenu();
 	}
 
 }
