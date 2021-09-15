@@ -388,12 +388,41 @@ import java.util.Scanner;
 			}
 			return active;
 		}
-		static double depositMoney() {
-			return 0;
-			
+		static void withdrawMoney(int wAmount, double balance, String accountType, double social) {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from EXISTINGACCOUNTS WHERE identifier = '"+social+"'");
+				if (rs.next()) {
+					System.out.println("User found, updating.");
+					double newBal = balance-wAmount;
+					stmt.executeUpdate("UPDATE EXISTINGACCOUNTS SET "+accountType+" = '"+newBal+"' WHERE identifier = '"+social+"' ");
+					System.out.println("Finished updating.\nReturning to main menu");
+					MainData.mainMenu();
+					} else {System.out.println("System failure, returning to main menu."); MainData.mainMenu();}
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
 		}
-		static double withdrawMoney() {
-			return 0;
+		static void depositMoney(int wAmount, double balance, String accountType, double social) {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from EXISTINGACCOUNTS WHERE identifier = '"+social+"'");
+				if (rs.next()) {
+					System.out.println("User found, updating.");
+					double newBal = balance+wAmount;
+					stmt.executeUpdate("UPDATE EXISTINGACCOUNTS SET "+accountType+" = '"+newBal+"' WHERE identifier = '"+social+"' ");
+					System.out.println("Finished processing.\n Your new balance is"+newBal+"\nReturning to main menu");
+					return;
+					} else {System.out.println("System failure, returning to main menu."); MainData.mainMenu();}
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
 		}
 		static double transferMoney() {
 			return 0;
