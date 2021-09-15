@@ -278,7 +278,7 @@ import java.util.Scanner;
 				Class.forName("oracle.jdbc.driver.OracleDriver");
 				Connection conn= DriverManager.getConnection(db_url, user, password);
 				Statement stmt=conn.createStatement();
-				ResultSet rs = stmt.executeQuery("Select * from PENDINGACCOUNTS WHERE social = '"+social+"'");
+				ResultSet rs = stmt.executeQuery("Select * from PENDINGACCOUNTS WHERE identifier = '"+social+"'");
 				System.out.println(rs.next());
 				String role="null";
 				if(rs !=null) {

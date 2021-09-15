@@ -20,27 +20,30 @@ public class Employee extends Users {
 
 	private static void checkAppStatus(Scanner scan) {
 		System.out.println("Would you like to\n 1. Check for a pending application\n2. Approve or deny a pending application\n3. Check account applications\n4. Approve or deny account applications.");
-		String appChoice =scan.next();
-		System.out.println("Please enter the username the application was placed under.");
-		String username = scan.next();
+		int appChoice =scan.nextInt();
+		String username="";
+		if (appChoice < 4) {
+			System.out.println("Please enter the username the application was placed under.");
+			username = scan.next();
+		}
 		System.out.println("Please verify the social security number attached to the application.");
 		double social = scan.nextDouble();
 		String role = "Users";
 		System.out.println("Thank you, one moment while we locate the application.");
 		int perms=2;
 		switch(appChoice) {
-		case"1": jdbc.checkPendingApps(role, social, username);
-		break;
-		case"2": if(jdbc.checkDeletePerms(role, social, username, perms)==true) {
-			jdbc.approveDenyApp(role, social, username, scan);
-			}else{System.out.println("Insufficient permissions to execute command.\n Please contact an administrator.");};
-		break;
-		case "3": jdbc.checkPendingBankAccount(social);
-		break;
-		case "4": jdbc.approveDenyBankApp(social, username, scan);;
-		break;
-		default:System.out.println("Please select either 1 or 2."); employeeMenu(role, scan);
-		break;
+			case 1: jdbc.checkPendingApps(role, social, username);
+			break;
+			case 2: if(jdbc.checkDeletePerms(role, social, username, perms)==true) {
+				jdbc.approveDenyApp(role, social, username, scan);
+				}else{System.out.println("Insufficient permissions to execute command.\n Please contact an administrator.");};
+			break;
+			case 3: jdbc.checkPendingBankAccount(social);
+			break;
+			case 4: jdbc.approveDenyBankApp(social, username, scan);;
+			break;
+			default:System.out.println("Please select either 1 or 2."); employeeMenu(role, scan);
+			break;
 		
 		}
 		
