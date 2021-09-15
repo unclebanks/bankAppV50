@@ -61,7 +61,7 @@ public class Customer extends Users {
 				break;
 				case 3: transferMoney(scan, accountType,social,account);
 				break;
-				case 4: viewAccountHistory(scan);
+				case 4: viewAccountHistory(scan, accountType,social,account);
 				break;
 				default:System.out.println("Please make a valid choice.");
 			return;
@@ -138,7 +138,7 @@ public class Customer extends Users {
 			
 		}
 	}
-	private static void viewAccountHistory(Scanner scan) {
+	private static void viewAccountHistory(Scanner scan, String accountType, double social, int account) {
 		System.out.println("What would you like to view?\n1. Deposit history\n2. Withdrawal history\n3. Transfer history\n4. All history");
 		int option =scan.nextInt();
 		switch(option) {

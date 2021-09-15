@@ -399,14 +399,15 @@ import java.util.Scanner;
 					double newBal = balance-wAmount;
 					stmt.executeUpdate("UPDATE EXISTINGACCOUNTS SET "+accountType+" = '"+newBal+"' WHERE identifier = '"+social+"' ");
 					System.out.println("Finished updating.\nReturning to main menu");
-					MainData.mainMenu();
+					logWithdrawals(social,accountType,balance,wAmount,newBal);
+					return;
 					} else {System.out.println("System failure, returning to main menu."); MainData.mainMenu();}
 			} catch (ClassNotFoundException | SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}
-		static void depositMoney(int wAmount, double balance, String accountType, double social) {
+		static void depositMoney(int dAmount, double balance, String accountType, double social) {
 			try {
 				Class.forName("oracle.jdbc.driver.OracleDriver");
 				Connection conn= DriverManager.getConnection(db_url, user, password);
@@ -414,9 +415,10 @@ import java.util.Scanner;
 				ResultSet rs = stmt.executeQuery("Select * from EXISTINGACCOUNTS WHERE identifier = '"+social+"'");
 				if (rs.next()) {
 					System.out.println("User found, updating.");
-					double newBal = balance+wAmount;
+					double newBal = balance+dAmount;
 					stmt.executeUpdate("UPDATE EXISTINGACCOUNTS SET "+accountType+" = '"+newBal+"' WHERE identifier = '"+social+"' ");
 					System.out.println("Finished processing.\n Your new balance is"+newBal+"\nReturning to main menu");
+					logDeposits(social,accountType,balance,dAmount,newBal);
 					return;
 					} else {System.out.println("System failure, returning to main menu."); MainData.mainMenu();}
 			} catch (ClassNotFoundException | SQLException e) {
@@ -468,14 +470,31 @@ import java.util.Scanner;
 				e.printStackTrace();
 			}
 		}
-		private static void logDeposits() {
+		private static void logDeposits(double social,String accountType,double balance, int dAmount, double newBal) {
 			System.out.println("Need to log deposits here");
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				stmt.executeUpdate("INSERT INTO TRANSACTIONS (IDENTIFIER,TYPE,ORIGIN,ORIGINAMOUNTPRE,ORIGINAMOUNTPOST,RECEIVE,RECEIVEAMOUNTPRE,RECEIVEAMOUNTPOST,AMOUNT) VALUES ('"+social+"','deposit','"+accountType+"','"+balance+"','"+newBal+"','none','0','0','"+dAmount+"')");
+			} catch (SQLException | ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		static void viewDepositHistory() {
 			System.out.println("needs done");
 		}
-		private static void logWithdrawals() {
-			System.out.println("same for withdrawals");
+		private static void logWithdrawals(double social, String accountType, double balance, int wAmount, double newBal) {
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				stmt.executeUpdate("INSERT INTO TRANSACTIONS (IDENTIFIER,TYPE,ORIGIN,ORIGINAMOUNTPRE,ORIGINAMOUNTPOST,RECEIVE,RECEIVEAMOUNTPRE,RECEIVEAMOUNTPOST,AMOUNT) VALUES ('"+social+"','withdrawal','"+accountType+"','"+balance+"','"+newBal+"','none','0','0','"+wAmount+"')");
+			} catch (SQLException | ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		static void viewWithdrawalsHistory() {
 			System.out.println("needs done");
