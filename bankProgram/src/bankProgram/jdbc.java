@@ -316,9 +316,9 @@ import java.util.Scanner;
 				switch(accountType) {
 					case 1: db="CheckingAccount"; newBankAccount = "INSERT INTO EXISTINGACCOUNTS VALUES ('"+identifier+"', 1, 0, 0, 0, 0, 0)";
 					break;
-					case 2: db="SavingAccount"; newBankAccount = "INSERT INTO EXISTINGACCOUNTS VALUES ('"+identifier+"', 0, 0, 1, 0, 0, 0)";
+					case 2: db="SavingAccount"; newBankAccount = "INSERT INTO EXISTINGACCOUNTS VALUES ('"+identifier+"', 0, 0, 2, 0, 0, 0)";
 					break;
-					case 3: db="InvestingAccount"; newBankAccount = "INSERT INTO EXISTINGACCOUNTS VALUES ('"+identifier+"', 0, 0, 0, 0, 1, 0)";
+					case 3: db="InvestingAccount"; newBankAccount = "INSERT INTO EXISTINGACCOUNTS VALUES ('"+identifier+"', 0, 0, 0, 0, 3, 0)";
 					break;
 				}
 				ResultSet rs2 = stmt2.executeQuery("Select * from EXISTINGACCOUNTS WHERE IDENTIFIER = '"+social+"'");
@@ -337,7 +337,7 @@ import java.util.Scanner;
 			}
 			
 		}
-		static void bankAccApplicationDeletion(double identifier) {
+		private static void bankAccApplicationDeletion(double identifier) {
 			try {	
 				Class.forName("oracle.jdbc.driver.OracleDriver");
 				Connection conn= DriverManager.getConnection(db_url, user, password);
@@ -355,6 +355,48 @@ import java.util.Scanner;
 				e.printStackTrace();
 			}
 			
+		}
+		static double getBankAccDetails (double social, int account) {
+			double active=0;
+			try {	
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from EXISTINGACCOUNTS WHERE identifier = '"+social+"'");
+				double balance=0;
+				int accountType=0;
+				if(rs.next()) {
+					switch(account) {
+						case 1: balance=rs.getDouble(3); accountType=2;
+						break;
+						case 2: balance=rs.getDouble(5); accountType=4;
+						break;
+						case 3: balance=rs.getDouble(7); accountType=6;
+						break;
+					}
+					if (rs.getInt(accountType) > 0) {
+						active=1;
+						return balance;
+					} else {
+						System.out.println("You do not own this type of account.");
+					}
+				} else {System.out.println("account not found.");}
+				
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return active;
+		}
+		static double depositMoney() {
+			return 0;
+			
+		}
+		static double withdrawMoney() {
+			return 0;
+		}
+		static double transferMoney() {
+			return 0;
 		}
 
 }
