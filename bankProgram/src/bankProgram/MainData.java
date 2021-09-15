@@ -53,7 +53,7 @@ public class MainData {
 		break;
 		case "2": role="Customers";
 		break;
-		case "3": role="Employee";
+		case "3": role="Employees";
 		break;
 		case "4": role="Admin";
 		break;
@@ -72,7 +72,6 @@ public class MainData {
 		Scanner scan= new Scanner(System.in);
 		String userName;
 		String password;
-		String emailChoice;
 		int social;
 		String first=scan.next();
 		String last=scan.next();
@@ -94,6 +93,7 @@ public class MainData {
 		password=scan.next();
 		System.out.println("PLease enter your social security number.");
 		social=scan.nextInt();
+		scan.close();
 		jdbc.accountCreation(accountType, first, last, password, userName, social);
 	}
 
