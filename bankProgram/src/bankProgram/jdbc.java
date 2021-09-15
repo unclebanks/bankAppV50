@@ -424,8 +424,49 @@ import java.util.Scanner;
 				e.printStackTrace();
 			}			
 		}
-		static double transferMoney() {
-			return 0;
+		static void transferMoney(String accountType, String toAccount,double social, double amountToTransfer) {
+			System.out.println("Made it to transfer monoey jdbc");
+			try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+				Connection conn= DriverManager.getConnection(db_url, user, password);
+				Statement stmt=conn.createStatement();
+				Connection conn2= DriverManager.getConnection(db_url, user, password);
+				Statement stmt2=conn2.createStatement();
+				ResultSet rs = stmt.executeQuery("Select * from EXISTINGACCOUNTS WHERE IDENTIFIER = '"+social+"'");
+				System.out.println("got data from existing accounts");
+				int originAccount=0;
+				int recAccount=0;
+				rs.next();
+				switch(accountType) {
+					case "CheckingBal": originAccount=3;
+					break;
+					case "SavingBal": originAccount=5;
+					break;
+					case "InvestingBal": originAccount=7;
+					break;
+				}
+				switch(toAccount) {
+				case "CheckingBal": recAccount=3;
+				break;
+				case "SavingBal": recAccount=5;
+				break;
+				case "InvestingBal": recAccount=7;
+				break;
+				}
+				double oldBalanceOrigin = rs.getDouble(originAccount);
+				double newBalanceOrigin = oldBalanceOrigin-amountToTransfer;
+				double oldBalanceReceiver = rs.getDouble(recAccount);
+				double newBalanceReceiver = oldBalanceReceiver+amountToTransfer;
+				ResultSet rs2 = stmt2.executeQuery("Select * from EXISTINGACCOUNTS WHERE IDENTIFIER = '"+social+"'");
+				stmt2.executeUpdate("UPDATE EXISTINGACCOUNTS SET "+toAccount+" = "+newBalanceReceiver+" WHERE IDENTIFIER = '"+social+"'");
+				stmt2.executeUpdate("UPDATE EXISTINGACCOUNTS SET "+accountType+" = "+newBalanceOrigin+" WHERE IDENTIFIER = '"+social+"'");
+				System.out.println("Finished transfer, new balance for origin account is "+newBalanceOrigin+" and the new balance for the receiving account it "+newBalanceReceiver);
+				System.out.println("For security purposes returning to main menu");
+				MainData.mainMenu();
+			} catch (ClassNotFoundException | SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 }

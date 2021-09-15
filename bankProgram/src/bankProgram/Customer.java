@@ -59,7 +59,7 @@ public class Customer extends Users {
 				break;
 				case 2: depositMoney(scan,balance,accountType,social);
 				break;
-				case 3: transferMoney(scan);
+				case 3: transferMoney(scan, accountType,social,account);
 				break;
 				default:System.out.println("Please make a valid choice.");
 			return;
@@ -71,13 +71,43 @@ public class Customer extends Users {
 		
 	}
 
-	private static void transferMoney(Scanner scan) {
+	private static void transferMoney(Scanner scan, String accountType, double social, int account) {
 		// TODO Auto-generated method stub
+		String toAccount="";
+		System.out.println("Which account would you like to transfer money to?");
+		int rAccount=0;
+		int toSelector;
+		switch(accountType) {
+			case "CheckingBal": System.out.println("1. Savings\n2. Investing");toSelector=scan.nextInt();
+				if (toSelector==1) {toAccount="SavingBal";rAccount=2;} else {toAccount="InvestingBal";rAccount=3;}
+			break;
+			case "SavingBal": System.out.println("1. Checkings\n2. Investing");toSelector=scan.nextInt();
+				if (toSelector==1) {toAccount="CheckingBal";rAccount=1;} else {toAccount="InvestingBal";rAccount=3;}
+			break;
+			case "InvestingBal": System.out.println("1. Checkings\n2. Savings");toSelector=scan.nextInt();
+				if (toSelector==1) {toAccount="CheckingBal";rAccount=1;} else {toAccount="SavingBal";rAccount=2;}
+			break;
+		}
+		System.out.println("Your balance in the originating account is");
+		System.out.println(jdbc.getBankAccDetails(social, account));
+		System.out.println("Your balance in the receiving account is");
+		System.out.println(jdbc.getBankAccDetails(social, rAccount));
+		double originAccount=jdbc.getBankAccDetails(social, account);
+		double recAccount=jdbc.getBankAccDetails(social, rAccount);
+		System.out.println("How much you would like to transfer? Max "+originAccount);
+		double amountToTransfer=scan.nextDouble();
+		if (amountToTransfer<0) {
+			System.out.println("Please enter a positive number.");
+			return;
+		} else if (amountToTransfer > originAccount) {
+			System.out.print("Please enter an amount less than or equal to the amount in the originating account.");
+			return;
+		} else { System.out.println("Preparing to process transaction.");jdbc.transferMoney(accountType,toAccount,social, amountToTransfer);}		
 		
 	}
 
 	private static void depositMoney(Scanner scan, double balance, String accountType, double social) {
-		System.out.println("How much would you like to withdraw?");
+		System.out.println("How much would you like to deposit?");
 		int wAmount=scan.nextInt();
 		if (wAmount < 0) {
 			System.out.println("Please enter a positive value.");
@@ -97,7 +127,11 @@ public class Customer extends Users {
 		if (wAmount > balance) {
 			System.out.println("Request cannot be completed, insufficient funds.");
 			return;
-		} else {
+		} else if (wAmount<0) {
+			System.out.println("Please enter a positive number.");
+			return;
+		}
+			else {
 			jdbc.withdrawMoney(wAmount, balance, accountType, social);
 			
 		}
